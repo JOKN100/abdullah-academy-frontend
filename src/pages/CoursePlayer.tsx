@@ -12,16 +12,29 @@ const Player = ReactPlayer as any;
 const AdBanner: React.FC = () => {
   useEffect(() => {
     try {
-      const adsbygoogle = (window as any).adsbygoogle || [];
-      if (document.querySelector('.adsbygoogle:not([data-adsbygoogle-status="done"])')) {
+      const pushAd = () => {
+        const adsbygoogle = (window as any).adsbygoogle || [];
         adsbygoogle.push({});
-      }
-    } catch (e) { console.error("AdSense Error: ", e); }
-  }, []);
+      };
+      
+      // بنعمل تأخير بسيط جداً عشان نتأكد إن العنصر اترسم في الشاشة
+      setTimeout(pushAd, 100);
+    } catch (e) {
+      console.error("AdSense Error: ", e);
+    }
+  }, []); // الكود ده هيشتغل مرة واحدة لما الدرس يفتح
+
   return (
-    <div className="w-full my-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center min-h-[100px] overflow-hidden relative border border-slate-200 dark:border-slate-700/50 shadow-sm">
-      <span className="absolute z-0 text-slate-400 dark:text-slate-500 font-bold text-xs">مساحة إعلانية منصة جاهز</span>
-      <ins className="adsbygoogle relative z-10 block w-full" data-ad-client="ca-pub-2979608987445865" data-ad-slot="4807584059" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <div className="w-full my-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center min-h-[90px] overflow-hidden relative border border-slate-200 dark:border-slate-700/50 shadow-sm">
+      <span className="absolute z-0 text-slate-400 dark:text-slate-500 font-bold text-xs">مساحة إعلانية - منصة عبدالله أكاديمي</span>
+      
+      <ins className="adsbygoogle relative z-10 block w-full" 
+           style={{ display: 'block' }}
+           data-ad-client="ca-pub-2979608987445865" 
+           data-ad-slot="4807584059" 
+           data-ad-format="auto" 
+           data-full-width-responsive="true">
+      </ins>
     </div>
   );
 };
