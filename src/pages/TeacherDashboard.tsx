@@ -450,6 +450,7 @@ export const TeacherDashboard: React.FC = () => {
                   <div><label className="block text-sm font-semibold mb-1">اسم الكورس</label><Input required value={newCourse.title} onChange={(e) => setNewCourse({...newCourse, title: e.target.value})} className="dark:bg-slate-950 dark:border-slate-700" /></div>
                   <div><label className="block text-sm font-semibold mb-1">سعر الكورس</label><Input required type="number" min="0" value={newCourse.price} onChange={(e) => setNewCourse({...newCourse, price: e.target.value})} className="dark:bg-slate-950 dark:border-slate-700" /></div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-semibold mb-1">صورة الغلاف</label>
                   <div className="flex gap-2 items-center">
@@ -457,6 +458,60 @@ export const TeacherDashboard: React.FC = () => {
                     {uploadingField === 'thumbnail' && <Loader2 className="w-5 h-5 animate-spin text-blue-600 shrink-0" />}
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">المرحلة الدراسية</label>
+                    <select required value={newCourse.stage || 'ثانوي'} onChange={(e) => setNewCourse({...newCourse, stage: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                      <option value="إعدادي">إعدادي</option>
+                      <option value="ثانوي">ثانوي</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">الصف الدراسي</label>
+                    <select required value={newCourse.grade || 'الصف الأول'} onChange={(e) => setNewCourse({...newCourse, grade: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                      {newCourse.stage === 'إعدادي' ? (
+                        <>
+                          <option value="الصف الأول">الصف الأول الإعدادي</option>
+                          <option value="الصف الثاني">الصف الثاني الإعدادي</option>
+                          <option value="الصف الثالث">الصف الثالث الإعدادي</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="الصف الأول">الصف الأول الثانوي</option>
+                          <option value="الصف الثاني">الصف الثاني الثانوي</option>
+                          <option value="الصف الثالث">الصف الثالث الثانوي</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+                </div>
+
+                {/* 💡 الشروط الذكية للأنظمة والمسارات في تالتة ثانوي */}
+                {newCourse.stage === 'ثانوي' && newCourse.grade === 'الصف الثالث' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div>
+                      <label className="block text-sm font-semibold mb-1 text-blue-600 dark:text-blue-400">القسم</label>
+                      <select required value={newCourse.educationSystem || 'عامة'} onChange={(e) => setNewCourse({...newCourse, educationSystem: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                        <option value="عامة">عامة</option>
+                        <option value="بكالوريا">بكالوريا</option>
+                      </select>
+                    </div>
+                    
+                    {newCourse.educationSystem === 'عامة' && (
+                      <div className="animate-in fade-in">
+                        <label className="block text-sm font-semibold mb-1 text-blue-600 dark:text-blue-400">المسار</label>
+                        <select required value={newCourse.track || 'مسار الطب'} onChange={(e) => setNewCourse({...newCourse, track: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                          <option value="مسار الطب">مسار الطب</option>
+                          <option value="مسار الهندسة وعلوم الحاسب">مسار الهندسة وعلوم الحاسب</option>
+                          <option value="مسار الآداب والفنون">مسار الآداب والفنون</option>
+                          <option value="مسار الأعمال">مسار الأعمال</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div><label className="block text-sm font-semibold mb-1">الوصف</label><textarea required rows={3} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm bg-transparent dark:bg-slate-950" value={newCourse.description} onChange={(e) => setNewCourse({...newCourse, description: e.target.value})} /></div>
                 <div className="pt-4 flex gap-3"><Button type="submit" className="flex-1" disabled={isSubmitting || uploadingField !== ''}>{isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'نشر الكورس'}</Button></div>
               </form>
@@ -475,6 +530,7 @@ export const TeacherDashboard: React.FC = () => {
                   <div><label className="block text-sm font-semibold mb-1">اسم الكورس</label><Input required value={editingCourse.title} onChange={(e) => setEditingCourse({...editingCourse, title: e.target.value})} className="dark:bg-slate-950 dark:border-slate-700" /></div>
                   <div><label className="block text-sm font-semibold mb-1">سعر الكورس</label><Input required type="number" min="0" value={editingCourse.price} onChange={(e) => setEditingCourse({...editingCourse, price: e.target.value})} className="dark:bg-slate-950 dark:border-slate-700" /></div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-semibold mb-1">تحديث الغلاف (اختياري)</label>
                   <div className="flex gap-2 items-center">
@@ -482,6 +538,60 @@ export const TeacherDashboard: React.FC = () => {
                     {uploadingField === 'editThumbnail' && <Loader2 className="w-5 h-5 animate-spin text-blue-600 shrink-0" />}
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">المرحلة الدراسية</label>
+                    <select required value={editingCourse.stage || 'ثانوي'} onChange={(e) => setEditingCourse({...editingCourse, stage: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                      <option value="إعدادي">إعدادي</option>
+                      <option value="ثانوي">ثانوي</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">الصف الدراسي</label>
+                    <select required value={editingCourse.grade || 'الصف الأول'} onChange={(e) => setEditingCourse({...editingCourse, grade: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                      {editingCourse.stage === 'إعدادي' ? (
+                        <>
+                          <option value="الصف الأول">الصف الأول الإعدادي</option>
+                          <option value="الصف الثاني">الصف الثاني الإعدادي</option>
+                          <option value="الصف الثالث">الصف الثالث الإعدادي</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="الصف الأول">الصف الأول الثانوي</option>
+                          <option value="الصف الثاني">الصف الثاني الثانوي</option>
+                          <option value="الصف الثالث">الصف الثالث الثانوي</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+                </div>
+
+                {/* 💡 الشروط الذكية للأنظمة والمسارات في تالتة ثانوي */}
+                {editingCourse.stage === 'ثانوي' && editingCourse.grade === 'الصف الثالث' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div>
+                      <label className="block text-sm font-semibold mb-1 text-blue-600 dark:text-blue-400">القسم</label>
+                      <select required value={editingCourse.educationSystem || 'عامة'} onChange={(e) => setEditingCourse({...editingCourse, educationSystem: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                        <option value="عامة">عامة</option>
+                        <option value="بكالوريا">بكالوريا</option>
+                      </select>
+                    </div>
+                    
+                    {editingCourse.educationSystem === 'عامة' && (
+                      <div className="animate-in fade-in">
+                        <label className="block text-sm font-semibold mb-1 text-blue-600 dark:text-blue-400">المسار</label>
+                        <select required value={editingCourse.track || 'مسار الطب'} onChange={(e) => setEditingCourse({...editingCourse, track: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
+                          <option value="مسار الطب">مسار الطب</option>
+                          <option value="مسار الهندسة وعلوم الحاسب">مسار الهندسة وعلوم الحاسب</option>
+                          <option value="مسار الآداب والفنون">مسار الآداب والفنون</option>
+                          <option value="مسار الأعمال">مسار الأعمال</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div><label className="block text-sm font-semibold mb-1">الوصف</label><textarea required rows={3} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm bg-transparent dark:bg-slate-950" value={editingCourse.description} onChange={(e) => setEditingCourse({...editingCourse, description: e.target.value})} /></div>
                 <div className="pt-4 flex gap-3"><Button type="submit" className="flex-1" disabled={isSubmitting || uploadingField !== ''}>{isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'حفظ التعديلات'}</Button></div>
               </form>
