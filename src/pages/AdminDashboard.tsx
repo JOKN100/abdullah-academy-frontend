@@ -199,6 +199,19 @@ export const AdminDashboard: React.FC = () => {
     } catch (err) { alert('خطأ في التعديل'); } finally { setIsSubmitting(false); }
   };
 
+  const toggleVisibility = async (courseId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`https://abdullah-academy-backend.onrender.com/api/courses/${courseId}/toggle-visibility`, {}, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      fetchData(); // تحديث الداتا عشان الزرار شكله يتغير فوراً
+    } catch (error) {
+      console.error("خطأ في تعديل حالة الكورس:", error);
+      alert("حصلت مشكلة ومش قادر أعدل حالة الكورس");
+    }
+  };
+
   const handleDeleteCourse = async (courseId: string) => {
     if (!window.confirm('تأكيد الحذف نهائياً؟')) return;
     try {
@@ -314,7 +327,7 @@ export const AdminDashboard: React.FC = () => {
     if (!studentSearchTerm) return [];
     return students.filter(s => s.name.includes(studentSearchTerm) || s.email.includes(studentSearchTerm) || s.phone.includes(studentSearchTerm)).slice(0, 5);
   }, [students, studentSearchTerm]);
-
+  
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-in fade-in flex flex-col md:flex-row gap-8 relative min-h-screen text-slate-900 dark:text-white">
       
@@ -470,18 +483,37 @@ export const AdminDashboard: React.FC = () => {
             {isLoading ? <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 text-blue-600 animate-spin" /></div> : courses.length === 0 ? <Card className="p-12 text-center border-dashed border-2 dark:border-slate-800"><h3 className="text-xl font-bold text-slate-500">لا يوجد كورسات</h3></Card> : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {courses.map(course => (
-                  <Card key={course._id} className="overflow-hidden flex flex-col shadow-sm bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-                    <img src={course.thumbnail} alt={course.title} className="h-48 w-full object-cover bg-slate-200 dark:bg-slate-800" />
+                  <Card key={course._id} className={`overflow-hidden flex flex-col shadow-sm border ${course.isVisible !== false ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800' : 'bg-slate-50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700 opacity-80'}`}>
+                    <img src={course.thumbnail} alt={course.title} className={`h-48 w-full object-cover bg-slate-200 dark:bg-slate-800 ${course.isVisible === false && 'grayscale'}`} />
                     <div className="p-5 flex flex-col flex-1">
-                      <div className="flex justify-between items-start mb-1"><h3 className="font-bold text-lg mb-1">{course.title}</h3>{course.isActive ? <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] px-2 py-1 rounded-md font-bold shrink-0 flex items-center gap-1"><Eye className="w-3 h-3"/> مفعل</span> : <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] px-2 py-1 rounded-md font-bold shrink-0 flex items-center gap-1"><EyeOff className="w-3 h-3"/> مخفي</span>}</div>
+                      <div className="flex justify-between items-start mb-1">
+                        <h3 className="font-bold text-lg mb-1">{course.title}</h3>
+                        {/* تعديل حالة العرض هنا بناءً على isVisible */}
+                        {course.isVisible !== false ? 
+                          <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] px-2 py-1 rounded-md font-bold shrink-0 flex items-center gap-1"><Eye className="w-3 h-3"/> ظاهر</span> 
+                          : 
+                          <span className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] px-2 py-1 rounded-md font-bold shrink-0 flex items-center gap-1"><EyeOff className="w-3 h-3"/> مخفي</span>
+                        }
+                      </div>
                       <p className="text-xs text-blue-600 dark:text-blue-400 font-bold mb-2">المدرس: {course.teacherName}</p>
                       <Button variant="outline" className="w-full mt-2 mb-4 gap-2 text-blue-600 dark:text-blue-400 dark:border-blue-900" onClick={() => setSelectedCourseForLessons(course)}><Video className="w-4 h-4" /> إدارة المحتوى ({course.lessons?.length || 0} دروس)</Button>
                       <div className="mt-auto flex justify-between items-center">
                         <span className="font-extrabold text-blue-600 dark:text-blue-400">{course.price} ج.م</span>
+                        
                         <div className="flex gap-2">
+                          {/* 💡 زرار تغيير الحالة الجديد (إخفاء/إظهار) */}
+                          <button 
+                            onClick={() => toggleVisibility(course._id)} 
+                            className={`p-2 rounded-lg transition-colors ${course.isVisible !== false ? 'text-amber-600 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 dark:hover:bg-amber-900/50' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50'}`}
+                            title={course.isVisible !== false ? 'إخفاء الكورس من الرئيسية' : 'إظهار الكورس في الرئيسية'}
+                          >
+                            {course.isVisible !== false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                          
                           <button onClick={() => { setEditingCourse(course); setIsEditCourseModalOpen(true); }} className="p-2 text-blue-600 bg-slate-100 dark:bg-slate-800 dark:text-blue-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700"><Edit className="w-4 h-4" /></button>
                           <button onClick={() => handleDeleteCourse(course._id)} className="p-2 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50"><Trash2 className="w-4 h-4" /></button>
                         </div>
+
                       </div>
                     </div>
                   </Card>
@@ -564,7 +596,7 @@ export const AdminDashboard: React.FC = () => {
         )}
       </main>
 
-      {/* 💡 مودال إضافة معلم جديد */}
+      {/* مودال إضافة معلم جديد */}
       {isAddTeacherModalOpen && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-900/80 backdrop-blur-sm pointer-events-auto">
           <Card className="w-full max-w-md shadow-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700">
