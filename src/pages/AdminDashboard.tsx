@@ -691,7 +691,7 @@ export const AdminDashboard: React.FC = () => {
                       </select>
                     </div>
                     
-                    {newCourse.educationSystem === 'عامة' && (
+                    {newCourse.educationSystem === 'بكالوريا' && (
                       <div className="animate-in fade-in">
                         <label className="block text-sm font-semibold mb-1 text-blue-600 dark:text-blue-400">المسار</label>
                         <select required value={newCourse.track || 'مسار الطب'} onChange={(e) => setNewCourse({...newCourse, track: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
@@ -778,7 +778,7 @@ export const AdminDashboard: React.FC = () => {
                       </select>
                     </div>
                     
-                    {editingCourse.educationSystem === 'عامة' && (
+                    {editingCourse.educationSystem === 'بكالوريا' && (
                       <div className="animate-in fade-in">
                         <label className="block text-sm font-semibold mb-1 text-blue-600 dark:text-blue-400">المسار</label>
                         <select required value={editingCourse.track || 'مسار الطب'} onChange={(e) => setEditingCourse({...editingCourse, track: e.target.value})} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-transparent dark:bg-slate-950 focus:ring-blue-600">
