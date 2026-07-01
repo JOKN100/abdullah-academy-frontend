@@ -37,7 +37,7 @@ export const LandingPage: React.FC = () => {
   // 💡 دالة الاشتراك عبر الواتساب
   const handleSubscribeViaWhatsApp = (courseTitle: string, teacherName: string) => {
     const message = encodeURIComponent(`السلام عليكم، أريد الاشتراك في كورس: "${courseTitle}" مع الأستاذ "${teacherName || 'العام'}".`);
-    window.open(`https://wa.me/201018046619?text=${message}`, '_blank');
+    window.open(`https://wa.me/201552571846?text=${message}`, '_blank');
   };
 
   const [isDark, setIsDark] = useState(() => {

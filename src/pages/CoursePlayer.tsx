@@ -56,12 +56,12 @@ export const CoursePlayer: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) return navigate('/login');
       try {
-        const userRes = await axios.get('http://localhost:5000/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+        const userRes = await axios.get('https://abdullah-academy-backend.onrender.com/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
         setUser(userRes.data.data);
         const progress = userRes.data.data.courseProgress?.find((p: any) => p.course === id);
         if (progress) setCompletedLessons(progress.completedLessons);
 
-        const courseRes = await axios.get(`http://localhost:5000/api/courses/${id}/play`, { headers: { Authorization: `Bearer ${token}` } });
+        const courseRes = await axios.get(`https://abdullah-academy-backend.onrender.com/api/courses/${id}/play`, { headers: { Authorization: `Bearer ${token}` } });
         setCourse(courseRes.data.data);
       } catch (err: any) { setError(err.response?.data?.message || 'حدث خطأ'); } finally { setIsLoading(false); }
     };
@@ -74,8 +74,8 @@ export const CoursePlayer: React.FC = () => {
     const fetchLessonExtras = async () => {
       if (!activeLesson?._id) return;
       const token = localStorage.getItem('token');
-      try { const examRes = await axios.get(`http://localhost:5000/api/exams/lesson/${activeLesson._id}`, { headers: { Authorization: `Bearer ${token}` } }); setLessonExam(examRes.data.data); } catch (err) { setLessonExam(null); }
-      try { const hwRes = await axios.get(`http://localhost:5000/api/homeworks/status/${activeLesson._id}`, { headers: { Authorization: `Bearer ${token}` } }); setHomeworkData(hwRes.data.data); setHomeworkLink(hwRes.data.data ? hwRes.data.data.fileUrl : ''); } catch (err) { setHomeworkData(null); setHomeworkLink(''); }
+      try { const examRes = await axios.get(`https://abdullah-academy-backend.onrender.com/api/exams/lesson/${activeLesson._id}`, { headers: { Authorization: `Bearer ${token}` } }); setLessonExam(examRes.data.data); } catch (err) { setLessonExam(null); }
+      try { const hwRes = await axios.get(`https://abdullah-academy-backend.onrender.com/api/homeworks/status/${activeLesson._id}`, { headers: { Authorization: `Bearer ${token}` } }); setHomeworkData(hwRes.data.data); setHomeworkLink(hwRes.data.data ? hwRes.data.data.fileUrl : ''); } catch (err) { setHomeworkData(null); setHomeworkLink(''); }
     };
     fetchLessonExtras();
   }, [activeLesson]);
@@ -96,7 +96,7 @@ export const CoursePlayer: React.FC = () => {
   const handleVideoError = useCallback(() => { setVideoError(true); }, []);
   const handleLessonComplete = async () => {
     if (!activeLesson || completedLessons.includes(activeLesson._id)) return;
-    try { const token = localStorage.getItem('token'); await axios.post(`http://localhost:5000/api/courses/${course._id}/lessons/${activeLesson._id}/complete`, {}, { headers: { Authorization: `Bearer ${token}` } }); setCompletedLessons(prev => [...prev, activeLesson._id]); } catch (err) {}
+    try { const token = localStorage.getItem('token'); await axios.post(`https://abdullah-academy-backend.onrender.com/api/courses/${course._id}/lessons/${activeLesson._id}/complete`, {}, { headers: { Authorization: `Bearer ${token}` } }); setCompletedLessons(prev => [...prev, activeLesson._id]); } catch (err) {}
   };
 
   const handleSubmitExam = () => {
@@ -110,7 +110,7 @@ export const CoursePlayer: React.FC = () => {
     e.preventDefault();
     if (!homeworkLink) return alert('الرجاء رفع الملف أولاً');
     setIsHwSubmitting(true);
-    try { const token = localStorage.getItem('token'); const res = await axios.post(`http://localhost:5000/api/homeworks/submit`, { courseId: course._id, lessonId: activeLesson._id, fileUrl: homeworkLink }, { headers: { Authorization: `Bearer ${token}` } }); setHomeworkData(res.data.data); alert('تم تسليم الواجب بنجاح!'); } catch (err: any) { alert('خطأ أثناء تسليم الواجب'); } finally { setIsHwSubmitting(false); }
+    try { const token = localStorage.getItem('token'); const res = await axios.post(`https://abdullah-academy-backend.onrender.com/api/homeworks/submit`, { courseId: course._id, lessonId: activeLesson._id, fileUrl: homeworkLink }, { headers: { Authorization: `Bearer ${token}` } }); setHomeworkData(res.data.data); alert('تم تسليم الواجب بنجاح!'); } catch (err: any) { alert('خطأ أثناء تسليم الواجب'); } finally { setIsHwSubmitting(false); }
   };
 
   const openPdf = () => { let url = activeLesson.pdfUrl; if (!url.startsWith('http')) url = 'https://' + url; window.open(url, '_blank'); };
@@ -119,7 +119,7 @@ export const CoursePlayer: React.FC = () => {
   // 💡 دالة التواصل عبر الواتساب للسؤال في الدرس
   const handleAskQuestion = () => {
     const message = encodeURIComponent(`السلام عليكم، عندي استفسار بخصوص درس "${activeLesson.title}" في كورس "${course.title}".`);
-    window.open(`https://wa.me/201018046619?text=${message}`, '_blank');
+    window.open(`https://wa.me/201552571846?text=${message}`, '_blank');
   };
 
   const renderVideoPlayer = () => {
@@ -187,7 +187,7 @@ export const CoursePlayer: React.FC = () => {
                   <div>
                     <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">اختر ملف الواجب</label>
                     <div className="flex gap-2 items-center">
-                      <Input type="file" accept="image/*,application/pdf" onChange={async (e) => { const file = e.target.files?.[0]; if(!file) return; setIsUploadingHw(true); try { const formData = new FormData(); formData.append('file', file); const res = await axios.post('http://localhost:5000/api/upload', formData); setHomeworkLink(res.data.url); } catch(err) { alert('فشل الرفع'); } finally { setIsUploadingHw(false); } }} className="cursor-pointer p-0 h-auto w-full" />
+                      <Input type="file" accept="image/*,application/pdf" onChange={async (e) => { const file = e.target.files?.[0]; if(!file) return; setIsUploadingHw(true); try { const formData = new FormData(); formData.append('file', file); const res = await axios.post('https://abdullah-academy-backend.onrender.com/api/upload', formData); setHomeworkLink(res.data.url); } catch(err) { alert('فشل الرفع'); } finally { setIsUploadingHw(false); } }} className="cursor-pointer p-0 h-auto w-full" />
                       {isUploadingHw && <Loader2 className="w-6 h-6 animate-spin text-blue-600 shrink-0" />}
                     </div>
                     {homeworkLink && <p className="text-xs text-emerald-600 mt-2 font-bold flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> تم تجهيز الملف</p>}

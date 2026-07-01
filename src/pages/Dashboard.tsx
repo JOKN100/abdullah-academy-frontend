@@ -17,10 +17,10 @@ export const Dashboard: React.FC = () => {
         const token = localStorage.getItem('token');
         if (!token) { navigate('/login'); return; }
 
-        const userRes = await axios.get('http://localhost:5000/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+        const userRes = await axios.get('https://abdullah-academy-backend.onrender.com/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
         setUser(userRes.data.data);
 
-        const coursesRes = await axios.get('http://localhost:5000/api/courses/my-courses', { headers: { Authorization: `Bearer ${token}` } });
+        const coursesRes = await axios.get('https://abdullah-academy-backend.onrender.com/api/courses/my-courses', { headers: { Authorization: `Bearer ${token}` } });
         setMyCourses(coursesRes.data.data);
       } catch (err) { 
         console.error(err); 

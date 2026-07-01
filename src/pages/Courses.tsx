@@ -16,8 +16,8 @@ export const Courses: React.FC = () => {
     const fetchPublicData = async () => {
       try {
         const [coursesRes, packagesRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/courses'),
-          axios.get('http://localhost:5000/api/packages').catch(() => ({ data: { data: [] } }))
+          axios.get('https://abdullah-academy-backend.onrender.com/api/courses'),
+          axios.get('https://abdullah-academy-backend.onrender.com  /api/packages').catch(() => ({ data: { data: [] } }))
         ]);
         setCourses(coursesRes.data.data);
         setPackages(packagesRes.data.data);

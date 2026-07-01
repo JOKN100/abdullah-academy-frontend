@@ -85,11 +85,11 @@ export const TeacherDashboard: React.FC = () => {
     setIsLoading(true); setError('');
 
     try {
-      const userRes = await axios.get('http://localhost:5000/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+      const userRes = await axios.get('https://abdullah-academy-backend.onrender.com/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
       if (userRes.data.data.role !== 'teacher') return navigate('/dashboard');
       setUser(userRes.data.data);
 
-      const dataRes = await axios.get('http://localhost:5000/api/teacher/dashboard', { headers: { Authorization: `Bearer ${token}` } });
+      const dataRes = await axios.get('https://abdullah-academy-backend.onrender.com/api/teacher/dashboard', { headers: { Authorization: `Bearer ${token}` } });
       const teacherData = dataRes.data.data;
       
       setStats(teacherData.stats);
@@ -113,7 +113,7 @@ export const TeacherDashboard: React.FC = () => {
     setUploadingField(fieldName);
     try {
       const formData = new FormData(); formData.append('file', file);
-      const res = await axios.post('http://localhost:5000/api/upload', formData);
+      const res = await axios.post('https://abdullah-academy-backend.onrender.com/api/upload', formData);
       return res.data.url;
     } catch (err) { alert('فشل الرفع'); return null; } finally { setUploadingField(''); }
   };
@@ -125,11 +125,11 @@ export const TeacherDashboard: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const uploadRes = await axios.post('http://localhost:5000/api/upload', formData);
+      const uploadRes = await axios.post('https://abdullah-academy-backend.onrender.com/api/upload', formData);
       const imageUrl = uploadRes.data.url;
 
       const token = localStorage.getItem('token');
-      await axios.patch('http://localhost:5000/api/users/profile-image', { profileImage: imageUrl }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.patch('https://abdullah-academy-backend.onrender.com/api/users/profile-image', { profileImage: imageUrl }, { headers: { Authorization: `Bearer ${token}` } });
       
       setUser({ ...user, profileImage: imageUrl });
     } catch (error) {
@@ -144,7 +144,7 @@ export const TeacherDashboard: React.FC = () => {
     if (!newCourse.thumbnail) { setIsSubmitting(false); return setFormError('الرجاء رفع غلاف الكورس'); }
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/courses', { ...newCourse, price: Number(newCourse.price), teacher: user._id }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post('https://abdullah-academy-backend.onrender.com/api/courses', { ...newCourse, price: Number(newCourse.price), teacher: user._id }, { headers: { Authorization: `Bearer ${token}` } });
       setIsAddModalOpen(false); setNewCourse({ title: '', description: '', price: '', thumbnail: '', stage: 'ثانوي', grade: 'الصف الأول', educationSystem: 'أساسي', track: 'عام' }); fetchData();
     } catch (err: any) { setFormError(err.response?.data?.message || 'خطأ'); } finally { setIsSubmitting(false); }
   };
@@ -153,7 +153,7 @@ export const TeacherDashboard: React.FC = () => {
     e.preventDefault(); setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:5000/api/courses/${editingCourse._id}`, editingCourse, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.patch(`https://abdullah-academy-backend.onrender.com/api/courses/${editingCourse._id}`, editingCourse, { headers: { Authorization: `Bearer ${token}` } });
       setIsEditCourseModalOpen(false); fetchData();
     } catch (err) { alert('خطأ في التعديل'); } finally { setIsSubmitting(false); }
   };
@@ -162,7 +162,7 @@ export const TeacherDashboard: React.FC = () => {
     if (!window.confirm('تأكيد الحذف نهائياً؟')) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`https://abdullah-academy-backend.onrender.com/api/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` } });
       fetchData(); 
     } catch (err: any) { alert('خطأ أثناء الحذف.'); }
   };
@@ -171,7 +171,7 @@ export const TeacherDashboard: React.FC = () => {
     e.preventDefault(); setLessonSubmitting(true); setLessonMessage({ type: '', text: '' });
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`http://localhost:5000/api/courses/admin/${selectedCourseForLessons._id}/lessons`, newLesson, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.post(`https://abdullah-academy-backend.onrender.com/api/courses/admin/${selectedCourseForLessons._id}/lessons`, newLesson, { headers: { Authorization: `Bearer ${token}` } });
       setLessonMessage({ type: 'success', text: response.data.message }); setSelectedCourseForLessons(response.data.data); setNewLesson({ title: '', videoUrl: '', pdfUrl: '' }); fetchData(); 
     } catch (err: any) { setLessonMessage({ type: 'error', text: err.response?.data?.message || 'خطأ' }); } finally { setLessonSubmitting(false); }
   };
@@ -180,7 +180,7 @@ export const TeacherDashboard: React.FC = () => {
     e.preventDefault(); setLessonEditSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.patch(`http://localhost:5000/api/courses/admin/${selectedCourseForLessons._id}/lessons/${editingLesson._id}`, editingLesson, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.patch(`https://abdullah-academy-backend.onrender.com/api/courses/admin/${selectedCourseForLessons._id}/lessons/${editingLesson._id}`, editingLesson, { headers: { Authorization: `Bearer ${token}` } });
       setSelectedCourseForLessons(res.data.data); setIsEditLessonModalOpen(false); setLessonMessage({ type: 'success', text: 'تم التعديل بنجاح' }); fetchData();
     } catch (err: any) { alert(err.response?.data?.message || 'خطأ'); } finally { setLessonEditSubmitting(false); }
   };
@@ -189,7 +189,7 @@ export const TeacherDashboard: React.FC = () => {
     if (!window.confirm('تأكيد الحذف؟')) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.delete(`http://localhost:5000/api/courses/admin/${selectedCourseForLessons._id}/lessons/${lessonId}`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.delete(`https://abdullah-academy-backend.onrender.com/api/courses/admin/${selectedCourseForLessons._id}/lessons/${lessonId}`, { headers: { Authorization: `Bearer ${token}` } });
       setSelectedCourseForLessons(res.data.data); setLessonMessage({ type: 'success', text: 'تم الحذف' }); fetchData();
     } catch (err: any) { alert('خطأ'); }
   };
@@ -198,7 +198,7 @@ export const TeacherDashboard: React.FC = () => {
     setViewersModalData({ isOpen: true, lessonTitle: lesson.title, viewers: [], loading: true });
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:5000/api/courses/admin/${courseId}/lessons/${lesson._id}/viewers`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.get(`https://abdullah-academy-backend.onrender.com/api/courses/admin/${courseId}/lessons/${lesson._id}/viewers`, { headers: { Authorization: `Bearer ${token}` } });
       setViewersModalData({ isOpen: true, lessonTitle: lesson.title, viewers: res.data.data, loading: false });
     } catch (err) { alert('خطأ'); setViewersModalData(prev => ({ ...prev, loading: false })); }
   };
@@ -207,7 +207,7 @@ export const TeacherDashboard: React.FC = () => {
     setSelectedLessonForExam({ ...lesson, courseId }); setExamData(null); setExamLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:5000/api/exams/lesson/${lesson._id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.get(`https://abdullah-academy-backend.onrender.com/api/exams/lesson/${lesson._id}`, { headers: { Authorization: `Bearer ${token}` } });
       setExamData(res.data.data);
     } catch (err) { setExamData(null); } finally { setExamLoading(false); }
   };
@@ -216,7 +216,7 @@ export const TeacherDashboard: React.FC = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(`http://localhost:5000/api/exams`, { courseId: selectedLessonForExam.courseId, lessonId: selectedLessonForExam._id, title: `امتحان: ${selectedLessonForExam.title}`, durationInMinutes: examParams.durationInMinutes, passMark: examParams.passMark }, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.post(`https://abdullah-academy-backend.onrender.com/api/exams`, { courseId: selectedLessonForExam.courseId, lessonId: selectedLessonForExam._id, title: `امتحان: ${selectedLessonForExam.title}`, durationInMinutes: examParams.durationInMinutes, passMark: examParams.passMark }, { headers: { Authorization: `Bearer ${token}` } });
       setExamData(res.data.data);
     } catch (err: any) { alert(err.response?.data?.message || 'خطأ'); }
   };
@@ -226,7 +226,7 @@ export const TeacherDashboard: React.FC = () => {
     if (newQuestion.options.some(opt => opt.trim() === '')) return alert('تعبئة جميع الاختيارات');
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(`http://localhost:5000/api/exams/${examData._id}/questions`, newQuestion, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.post(`https://abdullah-academy-backend.onrender.com/api/exams/${examData._id}/questions`, newQuestion, { headers: { Authorization: `Bearer ${token}` } });
       setExamData(res.data.data); setNewQuestion({ questionText: '', options: ['', '', '', ''], correctOptionIndex: 0 }); 
     } catch (err: any) { alert(err.response?.data?.message || 'خطأ'); }
   };
@@ -235,7 +235,7 @@ export const TeacherDashboard: React.FC = () => {
     e.preventDefault(); setIsGradingSubmit(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:5000/api/homeworks/${gradingHw._id}/grade`, { grade: gradeInput, feedback: feedbackInput }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.patch(`https://abdullah-academy-backend.onrender.com/api/homeworks/${gradingHw._id}/grade`, { grade: gradeInput, feedback: feedbackInput }, { headers: { Authorization: `Bearer ${token}` } });
       setGradingHw(null); setGradeInput(0); setFeedbackInput(''); fetchData(); 
     } catch (err) { alert('خطأ'); } finally { setIsGradingSubmit(false); }
   };

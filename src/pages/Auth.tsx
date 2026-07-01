@@ -35,7 +35,7 @@ export const Auth: React.FC<AuthProps> = ({ type }) => {
         ? { name, email, password, phone, parentPhone } 
         : { email, password };
 
-      const response = await axios.post(`http://localhost:5000${endpoint}`, payload);
+      const response = await axios.post(`https://abdullah-academy-backend.onrender.com${endpoint}`, payload);
 
       if (response.data && response.data.data.token) {
         localStorage.setItem('token', response.data.data.token);
